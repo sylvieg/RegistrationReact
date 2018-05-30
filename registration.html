@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <script src="https://unpkg.com/react@15/dist/react.js"></script>
+    <script src="https://unpkg.com/react-dom@15/dist/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.24.0/babel.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+    <!-- see https://reactjs.org/docs/add-react-to-a-new-app.html for production setting -->
+</head>
+<body>
+    <div id="root"></div>
+</div>
+
+<script type="text/babel">
+class Registration extends React.Component {
+	constructor(props) {
+		super(props)
+		this.activities = props.activities
+		this.restrictions = props.restrictions
+		this.emptyCourse = {first: "", last: "", activity:"Science", restrictions: []}
+		var emptyCourse = Object.assign({}, this.emptyCourse)
+		this.state = {course: emptyCourse, courses: []}
+		this.handleChange = this.handleChange.bind(this)
+		this.handleRestriction = this.handleRestriction.bind(this)
+		this.addCourse = this.addCourse.bind(this)
+		this.removeCourse = this.removeCourse.bind(this)
+	}
+	render() {
+		return (
+			<div className="container">
+			<h1>Course Registration</h1>
+				<CourseInput course = {this.state.course} activities = {this.activities} restrictions = {this.restrictions} handleChange = {this.handleChange} handleRestriction = {this.handleRestriction} addCourse = {this.addCourse} />
+				<Courses courses = {this.state.courses} removeCourse = {this.removeCourse} />
+			</div>
+		)
+	}
+	handleChange(event) {
+		var course = this.state.course
+		if (event.target.type === 'checkbox') {
+			course[event.target.name] = event.target.checked
+		} else {
+			course[event.target.name] = event.target.value
+		}
+        this.setState({course: course})
+    }
+    handleRestriction(event) {
+    	var course = this.state.course
+    	let i = course.restrictions.indexOf(event.target.name)
+		if (event.target.checked) {
+			if (i == -1) {
+				course.restrictions.push(event.target.name)
+				course.restrictions.sort((a, b) => {return a > b});
+			}
+		} else {
+			if (i > 0) course.restrictions.splice(i, 1)
+		}
+        this.setState({course: course}, function() {
+        	console.log(this.state.course)
+        })
+    }
+    addCourse() {
+    	var course = Object.assign({}, this.state.course)
+    	if (course.first == "" || course.last == "") {
+      		return
+    	}
+    	var courses = this.state.courses.slice();
+    	courses.push(course);
+    	var emptyCourse = Object.assign({}, this.emptyCourse)
+    	// setState is async - need a call back
+    	this.setState({course: emptyCourse, courses: courses}, function() {
+    		console.log(this.state)
+    		console.log(this.emptyCourse)
+    	})
+    }
+    removeCourse(index) {
+    	var courses = this.state.courses.slice();
+    	courses.splice(index, 1)
+    	this.setState({courses: courses}, function() {
+    		console.log(this.state)
+    	})
+    }
+}
+class CourseInput extends React.Component {
+	render() {
+		return(
+			<div>
+		<div className="form-group">
+			<label htmlFor="first">First Name</label>
+			<input type="text" id="first" name="first" value={this.props.first} onChange={this.props.handleChange} className="form-control" />
+		</div>
+		<div className="form-group">
+			<label htmlFor="last">Last Name</label>
+			<input type="text" id="last" name="last" value={this.props.last} onChange={this.props.handleChange}  className="form-control" />
+		</div>
+		<div className="form-group">
+			<label htmlFor="activity">Select Activity</label>
+			<select id="activity" name="activity" onChange={this.props.handleChange} className="form-control">
+				{this.props.activities.map((activity, i) =>
+					<option key={i} value={activity}>{activity}</option>
+				)}
+			</select>
+		</div>
+		<div className="form-group">
+			Check all that apply:
+			
+			{this.props.restrictions.map((restriction, i) => (
+				<div key={i} className="form-check">
+					<input type="checkbox" id={restriction.value} name={restriction.value} onChange={this.props.handleRestriction} className="form-check-input"/>
+					<label htmlFor={restriction.value} className="form-check-label">{restriction.value}) {restriction.label}</label>
+				</div>
+			))}
+		</div>
+		<div className="form-group">
+			<button onClick={() => this.props.addCourse()}>Submit</button>
+		</div>
+		</div>
+		)
+	}
+}
+function CourseForm(props) {
+	return (
+	<div>
+		<div className="form-group">
+			<label htmlFor="first">First Name</label>
+			<input type="text" id="first" name="first" value={props.first} onChange={props.handleChange} className="form-control" />
+		</div>
+		<div className="form-group">
+			<label htmlFor="last">Last Name</label>
+			<input type="text" id="last" name="last" value={props.last} onChange={props.handleChange}  className="form-control" />
+		</div>
+		<div className="form-group">
+			<label htmlFor="activity">Select Activity</label>
+			<select id="activity" name="activity" onChange={props.handleChange} className="form-control">
+				{props.activities.map((activity, i) =>
+					<option key={i} value={activity}>{activity}</option>
+				)}
+			</select>
+		</div>
+		<div className="form-group">
+			Check all that apply:
+			
+			{props.restrictions.map((restriction, i) => (
+				<div key={i} className="form-check">
+					<input type="checkbox" id={restriction.value} name={restriction.value} onChange={props.handleRestriction} className="form-check-input"/>
+					<label htmlFor={restriction.value} className="form-check-label">{restriction.value}) {restriction.label}</label>
+				</div>
+			))}
+		</div>
+		<div className="form-group">
+			<button onClick={() => props.addCourse()}>Submit</button>
+		</div>
+	</div>
+	)
+}
+function Courses(props) {
+	var rows = []
+	for (let i = 0; i < props.courses.length; ++i) {
+		rows.push(<Course key = {i} first = {props.courses[i].first} last = {props.courses[i].last} activity = {props.courses[i].activity} restrictions = {props.courses[i].restrictions} removeCourse = {props.removeCourse} />)
+	}
+	var style = { display: rows.length < 1 ? "none" : "block" };
+	return (
+		<table className="table" style={style}>
+			<thead>
+				<tr>
+					<th>Remove</th>
+					<th>First Name</th>
+					<th>Last Name</th>
+					<th>Activity</th>
+					<th>Restrictions</th>
+				</tr>
+			</thead>
+			<tbody>
+				{rows}
+			</tbody>
+		</table>
+	)
+}
+/// can use function Course(props) { return (JSX)} or const CourseForm = (props) => (JSX)
+const Course = (props) => (
+	<tr>
+		<td><button onClick={props.removeCourse}>x</button></td>
+		<td>{props.first}</td>
+		<td>{props.last}</td>
+		<td>{props.activity}</td>
+		<td>{props.restrictions.join('')}</td>
+	</tr>
+)
+const _restrictions = [
+  {value:"a", label:"Dietary Restrictions"},
+  {value:"b", label:"Physical Disabilities"},
+  {value:"c", label:"Medical Needs"},
+]
+const _activities = ["Science Lab","Swimming","Cooking","Painting"]
+
+ReactDOM.render(
+    <Registration restrictions={_restrictions} activities={_activities} />,
+    document.getElementById("root")
+)
+</script>
+</body>
+</html>
