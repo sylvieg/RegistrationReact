@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <script src="https://unpkg.com/react@15/dist/react.min.js"></script>
+    <script src="https://unpkg.com/react-dom@15/dist/react-dom.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.24.0/babel.js"></script>
+    <!-- see https://reactjs.org/docs/add-react-to-a-new-app.html for production setting -->
+</head>
+<body>
+    <div id="root"> </div>
+</div>
+
+<script type="text/babel">
+<!--
+function TransportationOptions(props){
+    return (
+        <h2>Choose Options</h2>
+        <div>
+            New Only 
+            <input type="checkbox" id="coding" name="interest" value="coding" />
+        </div>()
+        <div>
+            Select Type
+            <select>
+                <option value ="All">All</option>
+                {props.transports.map(function(transport, index){
+                    <option value={transport.type}>{transport.type}</option>
+                })}
+            </select>
+        </div>
+    )
+}
+function Transportation(props) {
+    return (
+        <h2>Welcome to React Transportation</h2>
+        <p>The best place to buy vehicles online<p/>
+        <TranportationOptions transports = props.transports />
+        <TransportationList transports = props.transports />
+    )
+}
+function TransportationList(props) {
+    //// todo loop of props.item
+    return (
+        {props.transports.map(function(transport, index) {
+            <TransportationType transport = transport/>
+        })}
+    )
+}
+function TransportationType(props){
+    return (
+        <h2>{props.type}</h2>
+        <table>
+            <tr>
+                <th>Year</th>
+                <th>Model</th>
+                <th>Price</th>
+                <th>Buy</th>
+            </tr>
+            {props.items.map(function(item, index) {
+                <tr>
+                    <td>{item.year}</td>
+                    <td>{item.model}</td>
+                    <td>{item.price}</td>
+                    <td><button>Buy Now</button>
+                </tr>
+            })}
+    )
+        
+}
+-->
+ReactDOM.render(
+    <Transportation transports = transports/>,
+    document.getElementById("root")
+)
+</script>
+</body>
+</html>
